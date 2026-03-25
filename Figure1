@@ -1,0 +1,74 @@
+clc
+clf
+clear all
+close all
+set(0,'DefaultAxesFontSize',25);
+set(0,'DefaultAxesFontName','Times New Roman');
+
+
+%Empty vectors and matrices to store data for N=100
+p_values=linspace(0,1,101);
+numerical1=zeros(100,101);
+mean_vector1=zeros(1,101);
+analytical1=zeros(1,101);
+
+for i=1:101
+
+for j=1:1000
+    %Calculate the number of links from the adjacency matrix
+    numerical1(j,i)=nnz(aon_network(100,p_values(i)))/2;
+end
+
+%Forming the analytical prediction
+analytical1(1,i)=(100-100^(2*p_values(i)))/(1-2*p_values(i));
+
+%Taking the mean over simulations
+mean_vector1=mean(numerical1,1);
+
+end
+
+%The analytical prediction at p=1/2
+analytical1(1,51)=100*log(100);
+
+%Plotting for N=100
+subplot(1,2,1)
+plot(p_values,mean_vector1,'DisplayName','Simulated Result');
+hold on;
+plot(p_values,analytical1,'DisplayName','Expected Result');
+hold off;
+xlabel('Probability of Connecting, \itp', 'Interpreter','tex');
+ylabel('Total Number of Links')
+title('Figure 1.1')
+legend;
+
+%Empty vectors and matrices to store data for N=1,000
+numerical3=zeros(100,101);
+mean_vector3=zeros(1,101);
+analytical3=zeros(1,101);
+
+for i=1:101
+
+%Calculate the number of links in 1,000 generated networks
+for j=1:1000
+    numerical3(j,i)=nnz(aon_network(1000,p_values(i)))/2;
+end
+
+%Forming the analytical prediction
+analytical3(1,i)=(1000-1000^(2*p_values(i)))/(1-2*p_values(i));
+mean_vector3=mean(numerical3,1);
+
+end
+
+%The analytical prediction at p=1/2
+analytical3(1,51)=1000*log(1000);
+
+%Plotting for N=1,000
+subplot(1,2,2)
+plot(p_values,mean_vector3,'DisplayName','Simulated Result');
+hold on;
+plot(p_values,analytical3,'DisplayName','Expected Result');
+hold off;
+xlabel('Probability of Connecting, \itp', 'Interpreter','tex');
+ylabel('Total Number of Links')
+title('Figure 1.2')
+legend;
