@@ -18,6 +18,8 @@ This repository contains all MATLAB code developed for the C5.4 Networks Mini-Pr
 
 `Figure7.m`	Generates Figure 7 from the mini-project report
 
+The non-MATLAB files of each is simply the exact code copy-pasted.
+
 All scripts must be in the same working directory for the figure scripts to locate `aon_network.m`.
 
 Each figure script is self-contained and will produce the corresponding figure as it appears in the mini-project report, correct up to random variation inherent to the all-or-none network.
