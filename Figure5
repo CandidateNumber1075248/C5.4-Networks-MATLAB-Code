@@ -1,0 +1,72 @@
+clc
+clf
+clear all
+close all
+set(0,'DefaultAxesFontSize',25);
+set(0,'DefaultAxesFontName','Times New Roman');
+
+%Setting the range of parameters to be used
+N_values=round(linspace(1000,10000,10));
+p_values=[0.3,0.5,0.7];
+
+%Number of trials to take the mean over
+trials=20;
+
+%Empty matrices to store data for L and the analytical prediction across parameter space
+L_mean=zeros(length(p_values),length(N_values));
+log_plot=zeros(length(p_values),length(N_values));
+
+
+for i=1:length(p_values)
+
+    for j=1:length(N_values)
+
+        L_trials=zeros(trials,1);
+
+        for trial=1:trials
+
+            %Generating the adjacency matrix for the network
+            A=aon_network(N_values(j),p_values(i));
+
+            %Calculate the distances between nodes using the adjacency
+            %matrix
+            G=graph(A);
+            D=distances(G);
+            D=D(D>0);
+
+            %Taking the mean distance
+            L_trials(trial)=mean(D);
+
+        end
+
+        %Taking the mean over simulations
+        L_mean(i,j)=mean(L_trials);
+
+        %Generating the analytical prediction for each p-value
+        log_plot(1,j)=2*log(N_values(j))/log(2/(1-2*0.3));
+        log_plot(2,j)=2*log(N_values(j))/log(log(N_values(j)));
+        log_plot(3,j)=5;
+
+    end
+end
+
+figure;
+hold on;
+
+%Plotting the simulated result and analytical prediction for each p-value
+a1=plot(N_values,L_mean(1,:),'-','LineWidth', 1.5,'color','#0f46a6','DisplayName','p=0.3');
+plot(N_values,log_plot(1,:),'--','LineWidth', 1.5,'color','#0f46a6')
+
+a2=plot(N_values,L_mean(2,:),'-','LineWidth', 1.5,'color','red','DisplayName','p=0.5');
+plot(N_values,log_plot(2,:),'--','LineWidth', 1.5,'color','red')
+
+a3=plot(N_values,L_mean(3,:),'-','LineWidth', 1.5,'color','#0f8a57','DisplayName','p=0.7');
+plot(N_values,log_plot(3,:),'--','LineWidth', 1.5,'color','#0f8a57')
+
+
+xlabel('Number of Nodes, N');
+ylabel('Average shortest-path length, L(N)');
+legend([a1,a2,a3],'Location','best')
+
+title('Figure 5');
+grid on;
