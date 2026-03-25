@@ -1,0 +1,39 @@
+%This code generates an adjacency matrix of an all-or-none network with
+%given number of nodes and copying probability. It is used in the code for
+%every Figure for the entire mini-project.
+
+function A=aon_network(N_max,p)
+
+% A is the adjaceny matrix of the network
+% N_max is the total number of nodes after which we stop
+% N is the number of nodes as the network grows
+% p is the copying probability
+
+A=zeros(N_max);
+N=1;
+
+for t=2:N_max
+
+    new_node=t;
+
+    %Choose target node and connect new node to it
+    target_node=randi(N);
+    A(new_node,target_node)=1;
+    A(target_node,new_node)=1;
+
+    %Connect to target's neighbours with probability p
+    neighbours=find(A(target_node,1:N));
+    if rand<p
+        for j=neighbours
+            A(new_node,j)=1;
+            A(j,new_node)=1;
+        end
+    end
+
+    %Repeat process recursively
+    N=N+1;
+
+end
+end
+
+
