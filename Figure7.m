@@ -1,0 +1,52 @@
+clc
+clf
+clear all
+close all
+set(0,'DefaultAxesFontSize',25);
+set(0,'DefaultAxesFontName','Times New Roman');
+
+%Number of trials to take the mean over
+trials=50;
+
+%Empty matrix to store data for the degree of each across each trial
+degree=zeros(1000,trials);
+
+for i=1:trials
+
+    %Generating the adjacency matrix for the network
+    A=aon_network(1000, 0.5);
+
+    %Derive the degree of each node using the adjacency matrix
+    degree(:,i)=sum(A,2);
+
+end
+
+%Taking the mean over simulations
+mean_degree=mean(degree,2);
+
+%Setting up the histogram
+binWidth=10;
+nodes=1:binWidth:(1000+1);
+bin_number=length(nodes)-1;
+degree_bin_mean=zeros(bin_number,1);
+Ni_bin_center=zeros(bin_number,1);
+
+%Inputting values into histogram
+for b=1:bin_number
+
+    index=nodes(b):(nodes(b+1)-1);
+    degree_bin_mean(b)=mean(mean_degree(index));
+    Ni_bin_center(b)=mean(index);
+
+end
+
+figure;
+hold on;
+
+%Plotting the histogram of degree against node birth size
+bar(Ni_bin_center,degree_bin_mean,1.0,'FaceColor',[0.2 0.6 0.8],'EdgeColor','none');
+
+xlabel('Size of Network at Birth of Node');
+ylabel('Degree');
+title('Figure 7');
+box on;

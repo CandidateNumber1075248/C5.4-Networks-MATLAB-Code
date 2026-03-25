@@ -1,0 +1,73 @@
+clc
+clf
+clear all
+close all
+set(0,'DefaultAxesFontSize',25);
+set(0,'DefaultAxesFontName','Times New Roman');
+
+%Setting the range of parameters to be used
+N_values=round(linspace(10,500,30));
+p_values = [0.2,1/3,0.4,0.5,2/3];            
+
+%Number of trials to take the mean over
+trials = 2000;
+
+%Empty matrices  and vectors to store data for T(N) and C(N) across parameter space
+T_data = zeros(length(p_values),length(N_values));
+C_data = zeros(length(p_values),length(N_values));
+T_temporary=zeros(trials,1);
+C_temporary=zeros(trials,1);
+
+for i=1:length(p_values)
+
+    for j=1:length(N_values)
+
+        for r = 1:trials
+
+            %Generating the adjacency matrix for the network
+            A = aon_network(N_values(j),p_values(i));
+
+            %Calculating T(N) and C(N) from the adjacency matrix
+            T = trace(A^3)/6;
+            k = sum(A,2);
+            C=3*T/sum(k.*(k-1)/2);
+
+            %Storing values
+            T_temporary(r)=T;
+            C_temporary(r)=C;
+
+        end
+
+        %Taking mean over simulations
+        T_data(i,j) = mean(T_temporary);
+        C_data(i,j) = mean(C_temporary);
+
+    end
+end
+
+%Labels for each p-value
+labels={'p = 1/5','p = 1/3','p = 2/5','p = 1/2','p = 2/3'};
+
+%Plotting T(N) against N
+subplot(1,2,1)
+hold on
+for i = 1:length(p_values)
+    plot(log(N_values),log(T_data(i,:)),'-','LineWidth',1.5);
+end
+xlabel('logN')
+ylabel('logT(N)')
+title('Figure 3.1')
+legend(labels,'Location','northwest')
+grid on
+
+%Plotting C(N) against N
+subplot(1,2,2)
+hold on
+for i = 1:length(p_values)
+    plot(N_values,C_data(i,:),'-','LineWidth',1.5);
+end
+xlabel('N')
+ylabel('C(N)')
+title('Figure 3.2')
+legend(labels,'Location','best')
+grid on
